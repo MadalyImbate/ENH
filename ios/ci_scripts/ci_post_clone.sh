@@ -12,15 +12,17 @@ cd "$CI_PRIMARY_REPOSITORY_PATH"
 
 # React Native 0.84 requires Node >= 22.11. Use Homebrew so the build does
 # not depend on the Node or Ruby versions preinstalled on the Xcode image.
-brew install node@22 ruby
-export PATH="$(brew --prefix node@22)/bin:$(brew --prefix ruby)/bin:$PATH"
+brew install node@22 ruby@3.4
+export PATH="$(brew --prefix node@22)/bin:$(brew --prefix ruby@3.4)/bin:$PATH"
 
 node -e 'const [major, minor] = process.versions.node.split(".").map(Number); process.exit(major > 22 || (major === 22 && minor >= 11) ? 0 : 1)'
 
 # Gemfile.lock pins the CocoaPods dependency graph. Install it with a
-# Homebrew Ruby rather than the legacy macOS system Ruby.
+# Homebrew Ruby 3.4 rather than the legacy macOS system Ruby or Ruby 4.
 gem install bundler -v 2.3.3 --no-document
-bundle install --deployment --jobs 4 --retry 3
+bundle config set --local deployment true
+bundle config set --local path vendor/bundle
+bundle install --jobs 4 --retry 3
 
 # .env is intentionally ignored by Git. Xcode Cloud injects these workflow
 # environment variables; neither values nor credentials are committed.
