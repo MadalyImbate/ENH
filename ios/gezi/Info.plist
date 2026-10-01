@@ -39,6 +39,8 @@
 	<string>We access your photo library so you can attach an existing photo to a support ticket.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We use your location to attach the current position when reporting a gas leak.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>We use your location to attach the current position when reporting a gas leak, including if you briefly leave the app before sending the report.</string>
 	<key>RCTNewArchEnabled</key>
 	<true/>
 	<key>UIAppFonts</key>
