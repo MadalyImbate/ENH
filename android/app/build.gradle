@@ -1,0 +1,67 @@
+apply plugin: "com.android.application"
+apply plugin: "org.jetbrains.kotlin.android"
+apply plugin: "com.facebook.react"
+apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle")
+
+react {
+    autolinkLibrariesWithApp()
+}
+
+def enableProguardInReleaseBuilds = false
+def jscFlavor = "io.github.react-native-community:jsc-android:2026004.+"
+
+android {
+    ndkVersion = rootProject.ext.ndkVersion
+    buildToolsVersion = rootProject.ext.buildToolsVersion
+    compileSdk = rootProject.ext.compileSdkVersion
+
+    namespace = "com.mapi.ek"
+
+    defaultConfig {
+        applicationId = "com.mapi.ek"
+        minSdkVersion = rootProject.ext.minSdkVersion
+        targetSdkVersion = rootProject.ext.targetSdkVersion
+        versionCode = 1
+        versionName = "1.0"
+    }
+
+    signingConfigs {
+        release {
+            def releaseStoreFile = project.findProperty("MYAPP_UPLOAD_STORE_FILE") ?: System.getenv("MYAPP_UPLOAD_STORE_FILE")
+            def releaseStorePassword = project.findProperty("MYAPP_UPLOAD_STORE_PASSWORD") ?: System.getenv("MYAPP_UPLOAD_STORE_PASSWORD")
+            def releaseKeyAlias = project.findProperty("MYAPP_UPLOAD_KEY_ALIAS") ?: System.getenv("MYAPP_UPLOAD_KEY_ALIAS")
+            def releaseKeyPassword = project.findProperty("MYAPP_UPLOAD_KEY_PASSWORD") ?: System.getenv("MYAPP_UPLOAD_KEY_PASSWORD")
+
+            if (releaseStoreFile && releaseStorePassword && releaseKeyAlias && releaseKeyPassword) {
+                storeFile = file(releaseStoreFile)
+                storePassword = releaseStorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeyPassword
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+            signingConfig = signingConfigs.debug
+        }
+        release {
+            minifyEnabled = enableProguardInReleaseBuilds
+            proguardFiles(
+                getDefaultProguardFile("proguard-android.txt"),
+                "proguard-rules.pro"
+            )
+            signingConfig = signingConfigs.release
+        }
+    }
+}
+
+dependencies {
+    implementation("com.facebook.react:react-android")
+
+    if (hermesEnabled.toBoolean()) {
+        implementation("com.facebook.react:hermes-android")
+    } else {
+        implementation(jscFlavor)
+    }
+}
