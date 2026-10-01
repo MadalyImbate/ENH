@@ -30,6 +30,10 @@ printf 'API_HOST=%s\nAPI_PATH=%s\n' "$ENH_API_HOST" "$ENH_API_PATH" > .env
 
 npm ci
 
+# The post-clone shell environment does not carry over to Xcode's archive
+# phase. Persist the Node 22 path for React Native's bundle script.
+printf 'export NODE_BINARY=%s\n' "$(command -v node)" > ios/.xcode.env.local
+
 # Each Xcode Cloud build receives a unique CI_BUILD_NUMBER. agvtool updates
 # both configurations so every TestFlight upload has a new CFBundleVersion.
 (
